@@ -11,7 +11,7 @@ type Price struct {
 }
 
 func main() {
-	internal.RunWithTunnel(func(conn net.Conn) {
+	internal.RunTCPServer(func(conn net.Conn) {
 		var err error
 		read := func(data ...any) {
 			for i := 0; err == nil && i < len(data); i++ {

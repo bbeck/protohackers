@@ -12,7 +12,7 @@ import (
 func main() {
 	var room Room
 
-	internal.RunWithTunnel(func(conn net.Conn) {
+	internal.RunTCPServer(func(conn net.Conn) {
 		defer conn.Close()
 
 		scanner := bufio.NewScanner(conn)

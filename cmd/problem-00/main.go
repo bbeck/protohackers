@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	internal.RunWithTunnel(func(conn net.Conn) {
+	internal.RunTCPServer(func(conn net.Conn) {
 		defer conn.Close()
 		io.Copy(conn, conn)
 	})

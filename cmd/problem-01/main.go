@@ -19,7 +19,7 @@ const NotPrime = `{"method":"isPrime","prime":false}` + "\n"
 const Malformed = `{"method":"malformed"}` + "\n"
 
 func main() {
-	internal.RunWithTunnel(func(conn net.Conn) {
+	internal.RunTCPServer(func(conn net.Conn) {
 		defer conn.Close()
 
 		r := bufio.NewReaderSize(conn, 1024*1024)
