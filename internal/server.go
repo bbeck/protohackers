@@ -26,3 +26,32 @@ func RunTCPServer(handler func(conn net.Conn)) {
 		go handler(conn)
 	}
 }
+
+func RunUDPServer(handler func(bs []byte) []byte) {
+	addr, err := net.ResolveUDPAddr("udp", "0.0.0.0:40000")
+	if err != nil {
+		log.Fatalf("error resolving UDP address: %v", err)
+	}
+
+	conn, err := net.ListenUDP("udp", addr)
+	if err != nil {
+		log.Fatalf("error listening for UDP connections: %v", err)
+	}
+	defer conn.Close()
+
+	for {
+		buffer := make([]byte, 1024*1024)
+		n, addr, err := conn.ReadFromUDP(buffer)
+		if err != nil {
+			return
+		}
+
+		response := handler(buffer[:n])
+		if response != nil {
+			_, err := conn.WriteTo(response, addr)
+			if err != nil {
+				return
+			}
+		}
+	}
+}
