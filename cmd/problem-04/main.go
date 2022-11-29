@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/bbeck/protohackers/internal"
+	"net"
 	"strings"
 )
 
@@ -11,16 +12,16 @@ func main() {
 		"version": "alpha",
 	}
 
-	internal.RunUDPServer(func(bs []byte) []byte {
+	internal.RunUDPServer(func(_ net.Addr, bs []byte, send func([]byte)) {
 		s := string(bs)
 
 		if key, value, found := strings.Cut(s, "="); found {
 			if key != "version" {
 				db[key] = value
 			}
-			return nil
+			return
 		}
 
-		return []byte(fmt.Sprintf("%s=%s", s, db[s]))
+		send([]byte(fmt.Sprintf("%s=%s", s, db[s])))
 	})
 }
