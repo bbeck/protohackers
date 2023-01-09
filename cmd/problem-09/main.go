@@ -13,8 +13,9 @@ import (
 
 func main() {
 	manager := JobManager{
-		Queues:     make(map[string][]Job),
-		InProgress: make(map[ClientID][]Job),
+		Jobs:       make(map[JobID]*Job),
+		Queues:     make(map[string]*PriorityQueue[*Job]),
+		InProgress: make(map[ClientID][]*Job),
 	}
 
 	internal.RunTCPServer(func(conn net.Conn) {
@@ -35,7 +36,6 @@ func main() {
 
 			var request Request
 			if err := json.Unmarshal(bs, &request); err != nil || !request.IsValid() {
-				fmt.Printf("clientID:%d invalid request:%s\n", clientID, bs)
 				io.WriteString(conn, InvalidRequest)
 				return
 			}
