@@ -27,7 +27,10 @@ func NewSessions() *Sessions {
 	// Create the background reaper process that closes expired sessions and
 	// removes them from the cache.
 	go func() {
-		for range time.Tick(SessionExpiration / 10) {
+		ticker := time.NewTicker(SessionExpiration / 10)
+		defer ticker.Stop()
+
+		for range ticker.C {
 			sessions.Mutex.Lock()
 
 			for id, last := range sessions.LastAccess {
@@ -105,7 +108,10 @@ func NewSession(id int, send func([]byte)) *Session {
 	// Create the background goroutine to retransmit messages that aren't acked in
 	// a timely fashion.  This goroutine will stop when the session is closed.
 	go func() {
-		for range time.Tick(RetransmissionTimeout / 10) {
+		ticker := time.NewTicker(RetransmissionTimeout / 10)
+		defer ticker.Stop()
+
+		for range ticker.C {
 			if session.Closed {
 				break
 			}
