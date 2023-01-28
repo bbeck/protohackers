@@ -42,7 +42,7 @@ func main() {
 				}
 
 				filename := args[0]
-				if !IsLegalDirectoryOrFilename(filename) {
+				if !IsLegalFilename(filename) {
 					client.Send("ERR illegal file name")
 					continue
 				}
@@ -67,7 +67,7 @@ func main() {
 				}
 
 				dir := args[0]
-				if !IsLegalDirectoryOrFilename(dir) {
+				if !IsLegalDirectoryName(dir) {
 					client.Send("ERR illegal dir name")
 					continue
 				}
@@ -92,7 +92,7 @@ func main() {
 				}
 
 				filename := args[0]
-				if !IsLegalDirectoryOrFilename(filename) {
+				if !IsLegalFilename(filename) {
 					client.Send("ERR illegal file name")
 					continue
 				}
@@ -147,6 +147,17 @@ func ParseRevision(s string) (int, error) {
 	}
 
 	return ParseInt(s)
+}
+
+func IsLegalDirectoryName(name string) bool {
+	return IsLegalDirectoryOrFilename(name)
+}
+
+func IsLegalFilename(name string) bool {
+	if strings.HasSuffix(name, "/") {
+		return false
+	}
+	return IsLegalDirectoryOrFilename(name)
 }
 
 func IsLegalDirectoryOrFilename(name string) bool {
